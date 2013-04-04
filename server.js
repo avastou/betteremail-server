@@ -1,7 +1,7 @@
 'use strict';
 var mail = require('./lib/mail')({
-    user: 'artoale@gmail.com',
-    password: '10maggio@@@',
+    user: '********@gmail.com',
+    password: '*******',
 });
 
 mail.connect()
