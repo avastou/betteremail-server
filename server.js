@@ -1,7 +1,7 @@
 'use strict';
 var mail = require('./lib/mail')({
-    user: '********@gmail.com',
-    password: '*******',
+    user: 'artoale@gmail.com',
+    password: '10mpmlt05'
 });
 
 mail.connect()
@@ -20,8 +20,7 @@ mail.connect()
 
     console.log('Start Fetching:', uids);
     return mail.fetch(uids, {}, {
-        headers: {parse: false},
-        body: true,
+        body: false,
     }).progress(function (mail) {
         partial += 1;
         console.log('Recived ' + partial + ' of ' + total + ' emails (', mail.from[0],')');
@@ -30,10 +29,6 @@ mail.connect()
 })
 .then(function (mails) {
     console.log('' + mails.length + ' emails recived');
-    mails[0].addLabels('Test_Label').then(function(something){
-        console.log(something);
-
-    });
 })
 .fail(function (err) {
     console.error(err);

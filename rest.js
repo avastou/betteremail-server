@@ -2,17 +2,42 @@
 
 var express = require('express');
 var app = express();
-var mail = require('./lib/mail')({
-    user: '******@gmail.com',
-    password: '************',
-});
+var getMailer = require('./lib/mail');
+var config = require('./config.json');
+
+var mail = getMailer(config);
 
 app.configure(function () {
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
-    app.use(express.errorHandler());
-    app.use(express.methodOverride());
+    app.use(function (req, res, next) {
+        var oneof = false;
+        console.log('asdasdasdad');
+
+        if (req.headers.origin) {
+            res.header('Access-Control-Allow-Origin', req.headers.origin);
+            oneof = true;
+        }
+        if (req.headers['access-control-request-method']) {
+            res.header('Access-Control-Allow-Methods', req.headers['access-control-request-method']);
+            oneof = true;
+        }
+        if (req.headers['access-control-request-headers']) {
+            res.header('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
+            oneof = true;
+        }
+        if (oneof) {
+            res.header('Access-Control-Max-Age', 60 * 60 * 24 * 365);
+        }
+        console.log(req.headers, res.headers);
+        // intercept OPTIONS method
+        if (oneof && req.method === 'OPTIONS') {
+            res.send(200);
+        } else {
+            next();
+        }
+    });
     app.use(app.router);
 
 });
@@ -45,7 +70,7 @@ mail.connect()
     });
 
     app.get('/boxes/:boxId', function (req, res) {
-        mail.open(req.params.boxId).then(function (box) {
+        mail.status(req.params.boxId).then(function (box) {
             res.json(box);
         }).fail(function (err) {
             res.json(err);
@@ -59,7 +84,7 @@ mail.connect()
                 body: false,
                 headers: {
                     fields: true,
-                    parse:false,
+                    parse: false,
                 }
             });
         }).then(function (emails) {
@@ -70,20 +95,20 @@ mail.connect()
     });
 
     app.get('/boxes/:boxId/all', function (req, res) {
-        mail.open(req.params.boxId).then(function () {
-            return mail.search(['ALL']);
-        }).then(function (uids) {
-            return mail.fetch(uids, {}, {
-                body: false,
-                headers: {
-                    fields: true,
-                    parse:false,
-                }
+        var mail = getMailer(config);
+        mail.connect().then(function () {
+            mail.open(req.params.boxId).then(function () {
+                return mail.search(['ALL']);
+            }).then(function (uids) {
+                return mail.fetch(uids, {}, {
+                    fields: ['date','message-id','to','from','subject','mime-version','content-type'],
+                    body: false,
+                });
+            }).then(function (emails) {
+                res.json(emails);
+            }).fail(function (err) {
+                res.json(err);
             });
-        }).then(function (emails) {
-            res.json(emails);
-        }).fail(function (err) {
-            res.json(err);
         });
     });
 
@@ -112,7 +137,7 @@ mail.connect()
             return mail.fetch(req.params.mailId, {}, {});
         }).then(function (mails) {
             return mails[0].addLabels(req.body);
-        }).then(function(labels){
+        }).then(function (labels) {
             res.json(labels);
         }).fail(function (err) {
             res.json(err);
