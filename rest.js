@@ -101,7 +101,7 @@ mail.connect()
                 return mail.search(['ALL']);
             }).then(function (uids) {
                 return mail.fetch(uids, {}, {
-                    fields: ['date','message-id','to','from','subject','mime-version','content-type'],
+                    fields: ['date','message-id','to','from','subject'],
                     body: false,
                 });
             }).then(function (emails) {
