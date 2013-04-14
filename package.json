@@ -1,0 +1,21 @@
+{
+  "name": "imaptest",
+  "version": "0.0.0",
+  "dependencies": {
+    "express": "~3.1.1",
+    "imap": "~0.7.8",
+    "mailparser": "0.3.4",
+    "q": "~0.9.2",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "grunt": "0.4.0rc7",
+    "grunt-contrib-copy": "0.4.0rc7",
+    "grunt-contrib-concat": "0.1.2rc6",
+    "grunt-contrib-coffee": "0.4.0rc7",
+    "grunt-jasmine-node": "*"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
