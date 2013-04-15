@@ -25,5 +25,6 @@
     "it": false,
     "expect": false,
     "exports":false,
+    "beforeEach":false
   }
 }

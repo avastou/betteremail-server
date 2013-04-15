@@ -1,6 +1,9 @@
 'use strict';
-var Q = require('q');
+var Q = require('q'),
+    di = require('di');
+
 var sync = require('../lib/sync');
+var injector;
 describe('sync module', function () {
     it('should export a create function', function () {
         expect(sync.create).toBeDefined();
@@ -14,11 +17,13 @@ describe('sync module', function () {
         describe('start', function () {
             var syncManager;
             beforeEach(function () {
-                syncManager = sync.create();
+                module = new di.Module()
+                module.value('db',{});
+                injector = new di.Injector([module])
+                syncManager = injector.invoke(sync.create);
             });
 
             it('should return a Q promise', function () {
-                console.log(syncManager);
                 var promise = syncManager.start();
                 expect(Q.isPromise(promise)).toBe(true);
             });
