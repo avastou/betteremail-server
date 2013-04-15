@@ -16,7 +16,7 @@
     "grunt-contrib-coffee": "0.4.0rc7",
     "grunt-jasmine-node": "*",
     "di": "0.0.1",
-    "mongodb-fixtures": "0.0.5"
+    "mongodb-fixtures": "git://github.com/tdegrunt/mongodb-fixtures"
   },
   "engines": {
     "node": ">=0.8.0"
