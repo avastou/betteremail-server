@@ -9,13 +9,13 @@
             cacheInsert = {};
 
         return {
-            expectGet: function (collectionName, response) {
+            expectGet: function expectGet(collectionName, response) {
                 if (!cacheGet[collectionName]) {
                     cacheGet[collectionName] = [];
                 }
                 cacheGet[collectionName].push(response);
             },
-            expectInsert: function (collectionName, response){
+            expectInsert: function expectInsert(collectionName, response){
                 if (!cacheInsert[collectionName]) {
                     cacheInsert[collectionName] = [];
                 }
@@ -26,7 +26,7 @@
             // },
             _getById: function _getById(id, collectionName) {
                 var deferred = Q.defer();
-                if (cacheGet[collectionName].length <= 0) {
+                if (!cacheGet[collectionName] || cacheGet[collectionName].length <= 0) {
                     throw 'Unexpected get by id, id:' + id + ' collection ' + collectionName;
                 }
                 deferred.resolve(cacheGet[collectionName].shift());
@@ -34,15 +34,15 @@
             },
             _getAll: function getAll(collectionName, queryObj) {
                 var deferred = Q.defer();
-                if (cacheGet[collectionName].length <= 0) {
+                if (!cacheGet[collectionName] || cacheGet[collectionName].length <= 0) {
                     throw 'Unexpected getAll on collection ' + collectionName + ' queryObj: ' + JSON.stringify(queryObj);
                 }
                 deferred.resolve(cacheGet[collectionName].shift());
                 return deferred.promise;
             },
-            _insert: function (items, collectionName) {
+            _insert: function insert(items, collectionName) {
                 var deferred = Q.defer();
-                if (cacheInsert[collectionName].length <= 0) {
+                if (!cacheInsert[collectionName] || cacheInsert[collectionName].length <= 0) {
                     throw 'Unexpected insert on collection ' + collectionName + ' items: ' + JSON.stringify(items);
                 }
                 deferred.resolve(cacheInsert[collectionName].shift());

@@ -10,18 +10,19 @@ var di = require('di'),
     Q = require('Q'),
     m = new di.Module(),
     fix,
-    labels;
+    labels,
+    baseModelMock;
 
 m.value('config', config);
 m.factory('db', require('../lib/models/db'));
-m.factory('baseModel', require('../lib/models/baseModel'));
+m.factory('baseModel', require('./mock/baseModelMock.js'));
 m.factory('labels', require('../lib/models/labels'));
 
 
 
 describe('labels model', function () {
 
-    beforeEach(function (done) {
+    beforeEach(function () {
         this.addMatchers({
 
             toBeAnArray: function () {
@@ -48,15 +49,18 @@ describe('labels model', function () {
         });
         //Dependency injection test config
         injector = new di.Injector([m]);
-        db = injector.get('db');
+        // db = injector.get('db');
         labels = injector.get('labels');
+
+        baseModelMock = injector.get('baseModel');
+        // console.log('mock:',baseModelMock);
         //reset the 'test' db with fixtures from json
-        var fixtures = require('mongodb-fixtures');
-        fix = fixtures.load(__dirname + '/fixtures');
-        fixtures.save(fix, db, function () {
-            db.close();
-            done();
-        });
+        // var fixtures = require('mongodb-fixtures');
+        // fix = fixtures.load(__dirname + '/fixtures');
+        // fixtures.save(fix, db, function () {
+        //     db.close();
+        //     done();
+        // });
     });
 
     it('should expose a getById method', function () {
@@ -65,10 +69,14 @@ describe('labels model', function () {
     });
     describe('getById', function () {
         it('should find the right element', function (done) {
-            var testLabel1 = fix.labels[0];
-            labels.getById(testLabel1._id.toString()).then(function (label) {
+            var testLabel1 = {
+                name: 'test',
+                _id: 'anId',
+            };
+            baseModelMock.expectGet('labels', testLabel1);
+            labels.getById('anId').done(function (label) {
                 expect(label).toBeDefined();
-                expect(label.name).toBe('test_label_1');
+                expect(label.name).toBe('test');
                 done();
             });
         });
@@ -76,20 +84,23 @@ describe('labels model', function () {
 
     describe('getByName', function () {
         it('should find elements by name', function (done) {
-            var testLabel1 = fix.labels[0];
+            var testLabel1 = {
+                name: 'test'
+            };
+            baseModelMock.expectGet('labels', [testLabel1]);
             // console.log(testLabel1._id.toString());
-            labels.getByName(testLabel1.name).then(function (labels) {
+            labels.getByName(testLabel1.name).done(function (labels) {
                 expect(labels).toBeDefined();
                 expect(labels).toBeAnArray();
                 expect(labels.length).toBe(1);
                 expect(labels[0].name).toEqual(testLabel1.name);
-                expect(labels[0]._id).toEqual(testLabel1._id);
                 done();
             });
         });
 
         it('should return null if no match is found', function (done) {
-            labels.getByName('A_NONEXISTANT_NAME').then(function (label) {
+            baseModelMock.expectGet('labels', []);
+            labels.getByName('A_NONEXISTANT_NAME').done(function (label) {
                 expect(label).toBeDefined();
                 expect(label).toBe(null);
                 done();
@@ -103,6 +114,8 @@ describe('labels model', function () {
                 name: 'A_NEW_LABEL',
                 next: 123,
             };
+            baseModelMock.expectInsert('labels', [newlabel]);
+            baseModelMock.expectGet('labels', [newlabel]);
             labels.new(newlabel).then(function (labelArray) {
                 expect(labelArray[0]).toBeDefined();
                 expect(labelArray[0].name).toEqual(newlabel.name);
