@@ -19,7 +19,6 @@ m.factory('labels', require('../lib/models/labels'));
 
 
 
-
 describe('labels model', function () {
 
     beforeEach(function (done) {
@@ -63,5 +62,58 @@ describe('labels model', function () {
     it('should expose a getById method', function () {
         expect(labels.getById).toBeDefined();
         expect(typeof labels.getById).toBe('function');
+    });
+    describe('getById', function () {
+        it('should find the right element', function (done) {
+            var testLabel1 = fix.labels[0];
+            labels.getById(testLabel1._id.toString()).then(function (label) {
+                expect(label).toBeDefined();
+                expect(label.name).toBe('test_label_1');
+                done();
+            });
+        });
+    });
+
+    describe('getByName', function () {
+        it('should find elements by name', function (done) {
+            var testLabel1 = fix.labels[0];
+            // console.log(testLabel1._id.toString());
+            labels.getByName(testLabel1.name).then(function (labels) {
+                expect(labels).toBeDefined();
+                expect(labels).toBeAnArray();
+                expect(labels.length).toBe(1);
+                expect(labels[0].name).toEqual(testLabel1.name);
+                expect(labels[0]._id).toEqual(testLabel1._id);
+                done();
+            });
+        });
+
+        it('should return null if no match is found', function (done) {
+            labels.getByName('A_NONEXISTANT_NAME').then(function (label) {
+                expect(label).toBeDefined();
+                expect(label).toBe(null);
+                done();
+            });
+        });
+    });
+
+    describe('new', function () {
+        it('should add a new label to the db', function (done) {
+            var newlabel = {
+                name: 'A_NEW_LABEL',
+                next: 123,
+            };
+            labels.new(newlabel).then(function (labelArray) {
+                expect(labelArray[0]).toBeDefined();
+                expect(labelArray[0].name).toEqual(newlabel.name);
+                expect(labelArray[0].next).toEqual(newlabel.next);
+                return labels.getByName('A_NEW_LABEL');
+            }).then(function (labelArray) {
+                expect(labelArray[0]).toBeDefined();
+                expect(labelArray[0].name).toEqual(newlabel.name);
+                expect(labelArray[0].next).toEqual(newlabel.next);
+                done();
+            });
+        });
     });
 });
