@@ -1,11 +1,20 @@
 'use strict';
 var di = require('di'),
+    db,
+    config = {
+        dbName: 'bettermailTest',
+        dbHost: '127.0.0.1',
+        dbPort: 27017
+    },
     injector,
     Q = require('Q'),
     m = new di.Module(),
+    fix,
     labels,
     baseModelMock;
 
+m.value('config', config);
+m.factory('db', require('../lib/models/db'));
 m.factory('baseModel', require('./mock/baseModelMock.js'));
 m.factory('labels', require('../lib/models/labels'));
 
