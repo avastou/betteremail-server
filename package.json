@@ -4,7 +4,7 @@
   "dependencies": {
     "express": "~3.1.1",
     "imap": "~0.7.8",
-    "mailparser": "0.3.4",
+    "mailparser": "git://github.com/artoale/mailparser",
     "q": "~0.9.2",
     "underscore": "*",
     "mongodb": "~1.2.14"
