@@ -51,7 +51,7 @@ describe('baseModel', function () {
 
         //reset the 'test' db with fixtures from json
         var fixtures = require('mongodb-fixtures');
-        fix = fixtures.load(__dirname + '/fixtures');
+        fix = fixtures.load(__dirname + '/fixtures/labels');
         fixtures.save(fix, db, function () {
             db.close();
             done();
