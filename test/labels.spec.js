@@ -1,6 +1,5 @@
 'use strict';
 var di = require('di'),
-    db,
     config = {
         dbName: 'bettermailTest',
         dbHost: '127.0.0.1',
@@ -9,7 +8,6 @@ var di = require('di'),
     injector,
     Q = require('Q'),
     m = new di.Module(),
-    fix,
     labels,
     baseModelMock;
 

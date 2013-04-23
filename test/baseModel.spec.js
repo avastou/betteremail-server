@@ -193,5 +193,25 @@ describe('baseModel', function () {
                 });
             });
         });
+
+        it('should allow for subsequent insert', function (done) {
+            var newLabels = [{
+                name: 'new_label1',
+            }, {
+                name: 'new_label2',
+            }, {
+                name: 'new_label3',
+            }];
+            baseModel._insert(newLabels[0], 'labels')
+                .then(function (labels) {
+                return baseModel._insert(newLabels[1], 'labels');
+            })
+                .then(function (labels) {
+                return baseModel._insert(newLabels[2], 'labels');
+            })
+                .done(function () {
+                done();
+            });
+        });
     });
 });

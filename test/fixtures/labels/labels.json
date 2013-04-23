@@ -1,13 +1,13 @@
 [{
     "name": "test_label_1",
     "next": "1"
-},{
+}, {
     "name": "test_label_2",
     "next": "2"
-},{
+}, {
     "name": "test_label_3",
     "next": "3"
-},{
+}, {
     "name": "test_label_4",
     "next": "123456"
 }]
