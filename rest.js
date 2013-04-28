@@ -7,53 +7,29 @@ var config = require('./config.json');
 
 var mail = getMailer(config);
 
-function walkParts(tree, type, subtype) {
-    var retval;
-    if (Array.isArray(tree)) {
-        for (var i in tree) {
-            retval = walkParts(tree[i], type, subtype);
-            if (retval) {
-                return retval;
-            }
-        }
-    } else {
-        console.log(tree);
-        if (tree.type === type && tree.subtype === subtype) {
-            return tree;
-        }
-        return false;
-    }
-}
+// function walkParts(tree, type, subtype) {
+//     var retval;
+//     if (Array.isArray(tree)) {
+//         for (var i in tree) {
+//             retval = walkParts(tree[i], type, subtype);
+//             if (retval) {
+//                 return retval;
+//             }
+//         }
+//     } else {
+//         console.log(tree);
+//         if (tree.type === type && tree.subtype === subtype) {
+//             return tree;
+//         }
+//         return false;
+//     }
+// }
+
 app.configure(function () {
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
-    app.use(function (req, res, next) {
-        var oneof = false;
-
-        if (req.headers.origin) {
-            res.header('Access-Control-Allow-Origin', req.headers.origin);
-            oneof = true;
-        }
-        if (req.headers['access-control-request-method']) {
-            res.header('Access-Control-Allow-Methods', req.headers['access-control-request-method']);
-            oneof = true;
-        }
-        if (req.headers['access-control-request-headers']) {
-            res.header('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
-            oneof = true;
-        }
-        if (oneof) {
-            res.header('Access-Control-Max-Age', 60 * 60 * 24 * 365);
-        }
-
-        // intercept OPTIONS method
-        if (oneof && req.method === 'OPTIONS') {
-            res.send(200);
-        } else {
-            next();
-        }
-    });
+    app.use(require('./cors'));
     app.use(app.router);
 
 });
