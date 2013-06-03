@@ -9,7 +9,7 @@
     "q": "~0.9.2",
     "underscore": "*",
     "mongodb": "~1.2.14",
-    "clusterfck": "~0.5.1"
+    "clusterfck": "git@github.com:artoale/clusterfck.git"
   },
   "repository": "git://github.com/artoale/bettermail-server",
   "devDependencies": {
