@@ -76,6 +76,7 @@ module.exports = function (syncManager, clusterManager, baseModel, emails) {
         app.get('/boxes', function (req, res) {
             mail.boxes().then(function (boxes) {
                 var out = [];
+                console.log(boxes);
                 for (var i in boxes) {
                     var box = boxes[i];
                     var boxOut = {
